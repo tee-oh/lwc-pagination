@@ -22,15 +22,14 @@ export default class Pagination extends LightningElement {
         this.initialRecordsPerPage = this.recordsPerPage; //Store static copy of initial records per page value for restoration on pagination reset.
         this.selectedRecordsPerPage = this.recordsPerPage; //Set the selected value of the records per page picklist.
         this.updateRecordsPerPageOptions(); //Update the records per page options array to remove any duplicate value based on selected records per page value.
-        this.totalRecords = this.records.length;
-        this.totalPages = Math.ceil(this.totalRecords / this.recordsPerPage);
-        const paginationConnected = new CustomEvent('paginationconnected');
-        this.dispatchEvent(paginationConnected);
+        this.paginateList(this.records);
     }
 
     @api
     paginateList(parentList){ //Call this function to paginate a returned list, a search result list, a sorted list, etc.
         this.records = parentList;
+        this.totalRecords = this.records.length;
+        this.totalPages = Math.ceil(this.totalRecords / this.initialRecordsPerPage);
         this.paginateAndSendResults();
     }
 
