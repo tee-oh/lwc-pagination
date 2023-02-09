@@ -10,7 +10,7 @@ export default class Pagination extends LightningElement {
     currentPage = 1;
     initialRecordsPerPage;
     recordsPaginated = [];
-    recordsPerPageOptions = [5,10,25,50,100];
+    recordsPerPageOptions = [5,10,25,50];
     selectedRecordsPerPage;
     totalPages;
     totalRecords;
@@ -27,25 +27,26 @@ export default class Pagination extends LightningElement {
 
     @api
     paginateList(parentList){ //Call this function to paginate a returned list, a search result list, a sorted list, etc.
+        this.currentPage = 1;
         this.records = parentList;
         this.totalRecords = this.records.length;
-        this.totalPages = Math.ceil(this.totalRecords / this.initialRecordsPerPage);
+        this.totalPages = Math.ceil(this.totalRecords / this.selectedRecordsPerPage); //Identify total pages according to the initial records per page value OR what the user has selected.
         this.paginateAndSendResults();
     }
 
     @api
-    resetPagination(){ //Call this function to reset pagination back to default values.
+    resetPagination(){ //Call this function to reset pagination back to default values completely (i.e. refreshing a component).
         this.currentPage = 1;
         this.recordsPerPage = this.initialRecordsPerPage;
-        this.totalRecords = this.records.length; //Recalculate because a new record pulling into a list upon refresh could increase the record count.
-        this.totalPages = Math.ceil(this.totalRecords / this.initialRecordsPerPage); //Recalculate because a new record pulling into a list upon refresh could increase the page count.
+        this.totalRecords = this.records.length; //Recalculate because a new or deleted record pulling into a list upon refresh could alter the record count.
+        this.totalPages = Math.ceil(this.totalRecords / this.initialRecordsPerPage); //Recalculate because a new or deleted record pulling into a list upon refresh could alter the page count.
         this.selectedRecordsPerPage = this.initialRecordsPerPage;
         this.updateRecordsPerPageOptions();
         this.paginateAndSendResults();
     }
 
     updateRecordsPerPageOptions(){
-        this.recordsPerPageOptions = [5,10,25,50,100];
+        this.recordsPerPageOptions = [5,10,25,50];
         for (let i = 0; i < this.recordsPerPageOptions.length; i++) {
             if (this.recordsPerPageOptions[i] == this.recordsPerPage) {
                 this.recordsPerPageOptions.splice(i, 1);
@@ -65,6 +66,7 @@ export default class Pagination extends LightningElement {
             detail : [...this.recordsPaginated]
           })
         this.dispatchEvent(recordsPaginated);
+        console.log('Results paginated.')
     }
 
     handleFirstPage() {
